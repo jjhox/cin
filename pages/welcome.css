@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'Pretendard';
+    src: url('/font/Pretendard-Regular.ttf') format('truetype');
+}
+
+body, h1, h3, h4, h5, p, th, td, div { /* 모든 텍스트 요소에 대해 폰트 설정 */
+    font-family: 'Pretendard', sans-serif;
+}
+
+.logo-container .logo {
+  position: relative;
+    height: 100px;  /* 필요한 경우 조정하세요 */
+    margin-bottom: 30px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;  /* 중앙 정렬 */
+  align-items: center;  /* 수직 중앙 정렬 (필요한 경우) */
+}
+
+.logo {
+  margin: 0 auto;  /* 중앙 정렬 */
+}
+
+
+.welcome-container {
+  background-color: #EFF0F5;
+  display: flex;
+  flex-direction: column;  /* 이 줄을 추가하세요 */
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh;
+  border-top: 10px solid #3B7FF4;
+}
+
+
+  body {
+    margin: 0;
+    background-color: #EFF0F5;
+}
+
+  
+  .welcome-box {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 90px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  }
+  
+  h2 {
+    color: #3B7FF4;  /* 또는 font-weight: 400; */
+  }
+
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login-button {
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 5px;
+    border: none;
+    background-color: #3B7FF4;
+    color: #FFF;
+    cursor: pointer;
+  }
+  
+  .login-button:hover {
+    background-color: #2a5ebd;
+  }
+  

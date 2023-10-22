@@ -1,0 +1,225 @@
+@font-face {
+    font-family: 'Pretendard';
+    src: url('/font/Pretendard-Regular.ttf') format('truetype');
+}
+
+body, h1, h2, h3, h4, h5, p, th, td, div { /* 모든 텍스트 요소에 대해 폰트 설정 */
+    font-family: 'Pretendard', sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: #EFF0F5;
+}
+
+.current-period-name {
+    color: #3B7FF4;
+    font-size: 1.5rem;
+    font-weight: bold;  /* 볼드 스타일 추가 */
+    margin-top: 10px;
+}
+
+.current-period {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* 왼쪽으로 항목들을 정렬합니다. */
+    padding-left: 20px;  /* 왼쪽 패딩 추가 */
+}
+
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%;  /* 컨테이너의 전체 너비로 설정 */
+}
+
+.progress-container progress {
+    flex-grow: 1;
+}
+
+.progress-container .start-time {
+    color: #3B7FF4;
+    margin-right: 10px;
+    font-size: 0.7rem;
+}
+
+.progress-container .end-time {
+    color: gray;
+    margin-left: 10px;
+    font-size: 0.7rem;
+}
+
+
+
+.container {
+    background-color: #EFF0F5;
+    color: #000000;
+    font-family: 'Pretendard', sans-serif;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;  /* 로고와 버튼을 양 끝으로 정렬 */
+    align-items: center;
+    background-color: #EFF0F5;
+}
+
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.date-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;  /* 버튼 간격 설정 */
+}
+
+.logo-container .logo {
+    height: 70px;  /* 필요한 경우 조정하세요 */
+}
+
+.date-buttons .date-button {
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 5px;
+    border: none;
+    background-color: #EFF0F5;
+    color: #575757;
+    cursor: pointer;
+}
+
+.box {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+
+h3, h4 {
+    font-weight: normal;  /* 또는 font-weight: 400; */
+}
+
+
+.timetable-wrapper {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* 시간표 스타일 */
+.timetable-container {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
+    overflow: auto;
+    border-radius: 10px;
+    padding: 0px;
+}
+
+/* .timetable 클래스에서 보더 제거 */
+.timetable {
+    width: 100%;
+    border-collapse: collapse;
+    border: none; /* 보더 제거 */
+}
+
+.timetable th, .timetable td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* 시간표 헤더 스타일 */
+.timetable th {
+    background-color: #3B7FF4;
+    color: white;
+    font-weight: bold;
+    border: none; /* 보더 제거 */
+}
+
+/* 시간표 셀 스타일 */
+.timetable td {
+    background-color: #EFF0F5;
+    color: #000000;
+    font-weight: normal;
+    border: none; /* 보더 제거 */
+}
+
+/* 현재 시간 컨테이너 */
+.current-period {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+/* 급식 컨테이너 */
+.meal-container {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+/* 급식 내용의 색상을 회색으로 변경 */
+.meal-content {
+    color: gray;
+}
+
+
+
+.current-period-name {
+    font-weight: bold;  /* 볼드 스타일 추가 */
+}
+
+.detail-info {
+    display: none;  /* 초기 상태는 숨김 처리 */
+}
+
+.show-button {
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 5px;
+    border: none;
+    background-color: #EFF0F5;
+    color: #575757;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+.footer {
+    background-color: #EFF0F5;
+    color: gray;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    font-size: 12px;
+    width: 100%;
+    margin-top: 20px; /* 페이지의 나머지 부분과 푸터 사이에 약간의 공간을 추가 */
+}
+
+.footer a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.section-title {
+    margin-top: 5px;  /* 예: 아래쪽 여백을 10px로 설정 */
+    text-align: left;  /* 예: 텍스트를 왼쪽으로 정렬 */
+    padding-left: 0px;  /* 예: 왼쪽 패딩을 10px로 설정 */
+    color: rgb(156, 156, 156);
+    font-size: 0.8rem;
+}
