@@ -112,21 +112,13 @@ const Index = ({ letters }) => {
  // 날씨 데이터를 가져옵니다.
  const fetchWeather = async (setWeatherData) => {
   try {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.NEXT_PUBLIC_CITY_NAME}&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.CITY_NAME}&appid=${process.env.OPEN_WEATHER_API_KEY}`);
     const data = await response.json();
     setWeatherData(data);
   } catch (error) {
     console.error('Error fetching weather data:', error);
   }
 };
-
-useEffect(() => {
-  const intervalId = setInterval(() => {
-    setCurrentPeriod(getCurrentPeriod());
-  }, 1000);
-  
-  return () => clearInterval(intervalId);
-}, []);
 
 // 날씨 API의 영어 설명을 한국어로 번역합니다.
 const translateWeatherDescription = (description) => {
@@ -161,10 +153,11 @@ function formatDate(dateString: string): string {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentPeriod(getCurrentPeriod());
+    setCurrentPeriod(getCurrentPeriod());
     }, 1000);  // 1초마다 갱신
     return () => clearInterval(intervalId);  // 컴포넌트 언마운트 시 인터벌 정리
   }, []);
+
 
   useEffect(() => {
     const today = new Date();
@@ -181,7 +174,7 @@ useEffect(() => {
         router.push('/welcome');
     } else if (currentDate) {
         const { department, grade, class: classNumber } = JSON.parse(userData);
-        const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
+        const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -203,23 +196,29 @@ useEffect(() => {
     setDateOffset(prevOffset => prevOffset + offset);
   };
 
-  const fetchMeal = async () => {
-    const lunchResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
-    const dinnerResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
+  const fetchMeal = async (): Promise<void> => {
+    try {
+      const lunchResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
+      if (!lunchResponse.ok) throw new Error('Failed to fetch lunch data');
+      const dinnerResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
+      if (!dinnerResponse.ok) throw new Error('Failed to fetch dinner data');
   
-    const lunchData = await lunchResponse.json();
-    const dinnerData = await dinnerResponse.json();
+      const lunchData = await lunchResponse.json();
+      const dinnerData = await dinnerResponse.json();
   
-    if (lunchData.mealServiceDietInfo && lunchData.mealServiceDietInfo[1]?.row) {
-      setLunchData(lunchData.mealServiceDietInfo[1].row[0]);
-    } else {
-      setLunchData({DDISH_NM: "오늘은 점심이 없습니다.", NTR_INFO: "", ORPLC_INFO: "" });
-    }
-  
-    if (dinnerData.mealServiceDietInfo && dinnerData.mealServiceDietInfo[1]?.row) {
-      setDinnerData(dinnerData.mealServiceDietInfo[1].row[0]);
-    } else {
-      setDinnerData({DDISH_NM: "오늘은 석식이 없습니다.", NTR_INFO: "", ORPLC_INFO: "" });
+      if (lunchData.mealServiceDietInfo && lunchData.mealServiceDietInfo[1]?.row) {
+        setLunchData(lunchData.mealServiceDietInfo[1].row[0]);
+      } else {
+        setLunchData({DDISH_NM: "오늘은 점심이 없습니다.", NTR_INFO: "", ORPLC_INFO: "" });
+      }
+    
+      if (dinnerData.mealServiceDietInfo && dinnerData.mealServiceDietInfo[1]?.row) {
+        setDinnerData(dinnerData.mealServiceDietInfo[1].row[0]);
+      } else {
+        setDinnerData({DDISH_NM: "오늘은 석식이 없습니다.", NTR_INFO: "", ORPLC_INFO: "" });
+      }
+    } catch (error) {
+      console.error('Error fetching meal data:', error);
     }
   };
 
@@ -427,11 +426,8 @@ useEffect(() => {
   );
 };
 
-console.log(process.env.NEXT_PUBLIC_NEIS_API_KEY);
-
-
 export async function getServerSideProps() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SCHOOL_RSS_LINK}`);
+  const res = await fetch(`${process.env.SCHOOL_RSS_LINK}`);
   const text = await res.text();
   const parser = new xml2js.Parser();
   const parsedXml = await parser.parseStringPromise(text);
@@ -447,4 +443,3 @@ export async function getServerSideProps() {
 }
 
 export default Index;
-
