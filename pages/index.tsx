@@ -112,7 +112,7 @@ const Index = ({ letters }) => {
  // 날씨 데이터를 가져옵니다.
  const fetchWeather = async (setWeatherData) => {
   try {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.CITY_NAME}&appid=${process.env.OPEN_WEATHER_API_KEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.NEXT_PUBLIC_CITY_NAME}&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`);
     const data = await response.json();
     setWeatherData(data);
   } catch (error) {
@@ -174,7 +174,7 @@ useEffect(() => {
         router.push('/welcome');
     } else if (currentDate) {
         const { department, grade, class: classNumber } = JSON.parse(userData);
-        const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
+        const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -198,9 +198,9 @@ useEffect(() => {
 
   const fetchMeal = async (): Promise<void> => {
     try {
-      const lunchResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
+      const lunchResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
       if (!lunchResponse.ok) throw new Error('Failed to fetch lunch data');
-      const dinnerResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
+      const dinnerResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
       if (!dinnerResponse.ok) throw new Error('Failed to fetch dinner data');
   
       const lunchData = await lunchResponse.json();
