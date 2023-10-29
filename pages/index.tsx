@@ -427,7 +427,7 @@ useEffect(() => {
 };
 
 export async function getServerSideProps() {
-  const res = await fetch(`${process.env.SCHOOL_RSS_LINK}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SCHOOL_RSS_LINK}`);
   const text = await res.text();
   const parser = new xml2js.Parser();
   const parsedXml = await parser.parseStringPromise(text);
