@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import './Index.css';
 import xml2js from 'xml2js';
 
-// 평일 기준 기간에 대한 상수입니다.
 const WEEKDAYS = {
   'MonWedFri': [
     { name: '등교', start: '00:00', end: '08:30' },
@@ -21,7 +20,7 @@ const WEEKDAYS = {
     { name: '5교시 쉬는시간', start: '14:20', end: '14:30' },
     { name: '6교시', start: '14:30', end: '15:20' },
     { name: '6교시 쉬는시간', start: '15:20', end: '15:30' },
-    { name: '7교시', start: '16:30', end: '16:20' },
+    { name: '7교시', start: '15:30', end: '16:20' },
     { name: '청소 및 종례', start: '16:20', end: '16:40' },
     { name: '야자 또는 방과후', start: '16:40', end: '21:00' },
     { name: '하교', start: '21:00', end: '23:59' },
@@ -47,7 +46,6 @@ const WEEKDAYS = {
   'Weekend': [{ name: '휴일', start: '00:00', end: '23:59' }]
 };
 
-// 현재 날짜의 기간을 가져옵니다.
 const getTimePeriods = () => {
   const now = new Date();
   const dayOfWeek = now.getDay();
@@ -63,7 +61,6 @@ type Period = {
   progress: number;
 };
 
-// 시간과 현재 기간을 기준으로 현재 기간을 계산합니다.
 const getCurrentPeriod = () => {
   const now = new Date();
   const currentTime = now.getHours() * 60 + now.getMinutes();
@@ -88,7 +85,6 @@ const getCurrentPeriod = () => {
   return { name: '시간표 외 시간', start: '', end: '', progress: 0 };
 };
 
-// 사용자 데이터 쿠키를 삭제합니다.
 const deleteCookie = () => {
   Cookies.remove('userData');
 };
@@ -96,7 +92,7 @@ const deleteCookie = () => {
 const Index = ({ letters }) => {
   const router = useRouter();
   const userData = Cookies.get('userData');
-  const [dateOffset, setDateOffset] = useState(0);  // 날짜 오프셋 상태 추가
+  const [dateOffset, setDateOffset] = useState(0);
   const [currentDate, setCurrentDate] = useState<string | null>(null);
   const [timetable, setTimetable] = useState<any[]>([]);
   const [currentPeriod, setCurrentPeriod] = useState<Period>({ name: '', start: '', end: '', progress: 0 });
@@ -106,58 +102,100 @@ const Index = ({ letters }) => {
   const [weatherData, setWeatherData] = useState<{ weather: [{ description: string }], main: { temp: number } } | null>(null);
 
   useEffect(() => {
-    fetchWeather(setWeatherData);
+    fetchWeather();
   }, []);
-
- // 날씨 데이터를 가져옵니다.
- const fetchWeather = async (setWeatherData) => {
-  try {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.NEXT_PUBLIC_CITY_NAME}&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`);
-    const data = await response.json();
-    setWeatherData(data);
-  } catch (error) {
-    console.error('Error fetching weather data:', error);
-  }
-};
-
-// 날씨 API의 영어 설명을 한국어로 번역합니다.
-const translateWeatherDescription = (description) => {
-  const translations = {
-      'clear sky': '맑은 하늘',
-      'few clouds': '약간의 구름',
-      'scattered clouds': '흩어진 구름',
-      'overcast clouds': '흐린 구름',
-      'broken clouds': '조각난 구름',
-      'drizzle': '이슬비',
-      'rain': '비',
-      'shower rain': '소나기',
-      'thunderstorm': '천둥번개',
-      'snow': '눈',
-      'mist': '안개'
-
+  
+  const fetchWeather = async () => {
+    try {
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${process.env.NEXT_PUBLIC_CITY_NAME}&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`);
+      const data = await response.json();
+      setWeatherData(data);
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+    }
+  };
+  
+  const translateWeatherDescription = (description) => {
+    const translations = {
+      'thunderstorm with light rain': { description: '가벼운 비와 함께하는 천둥번개', imageUrl: '/images/11d.png' },
+      'thunderstorm with rain': { description: '비와 함께하는 천둥번개', imageUrl: '/images/11d.png' },
+      'thunderstorm with heavy rain': { description: '심한 비와 함께하는 천둥번개', imageUrl: '/images/11d.png' },
+      'light thunderstorm': { description: '가벼운 천둥번개', imageUrl: '/images/11d.png' },
+      'thunderstorm': { description: '천둥번개', imageUrl: '/images/11d.png' },
+      'heavy thunderstorm': { description: '심한 천둥번개', imageUrl: '/images/11d.png' },
+      'ragged thunderstorm': { description: '불규칙한 천둥번개', imageUrl: '/images/11d.png' },
+      'thunderstorm with light drizzle': { description: '이슬비와 함께하는 천둥번개', imageUrl: '/images/11d.png' },
+      'thunderstorm with drizzle': { description: '천둥번개와 이슬비', imageUrl: '/images/11d.png' },
+      'thunderstorm with heavy drizzle': { description: '심한 이슬비와 함께하는 천둥번개', imageUrl: '/images/11d.png' },
+      'light intensity drizzle': { description: '가벼운 이슬비', imageUrl: '/images/09d.png' },
+      'drizzle': { description: '이슬비', imageUrl: '/images/09d.png' },
+      'heavy intensity drizzle': { description: '심한 이슬비', imageUrl: '/images/09d.png' },
+      'light intensity drizzle rain': { description: '가벼운 비와 이슬비', imageUrl: '/images/09d.png' },
+      'drizzle rain': { description: '비와 이슬비', imageUrl: '/images/09d.png' },
+      'heavy intensity drizzle rain': { description: '심한 비와 이슬비', imageUrl: '/images/09d.png' },
+      'shower rain and drizzle': { description: '소나기와 이슬비', imageUrl: '/images/09d.png' },
+      'heavy shower rain and drizzle': { description: '심한 소나기와 이슬비', imageUrl: '/images/09d.png' },
+      'shower drizzle': { description: '이슬비 샤워', imageUrl: '/images/09d.png' },
+      'light rain': { description: '가벼운 비', imageUrl: '/images/10d.png' },
+      'moderate rain': { description: '중간 강도의 비', imageUrl: '/images/10d.png' },
+      'heavy intensity rain': { description: '강한 비', imageUrl: '/images/10d.png' },
+      'very heavy rain': { description: '매우 강한 비', imageUrl: '/images/10d.png' },
+      'extreme rain': { description: '극심한 비', imageUrl: '/images/10d.png' },
+      'freezing rain': { description: '얼어붙는 비', imageUrl: '/images/13d.png' },
+      'light intensity shower rain': { description: '가벼운 소나기', imageUrl: '/images/09d.png' },
+      'shower rain': { description: '소나기', imageUrl: '/images/09d.png' },
+      'heavy intensity shower rain': { description: '강한 소나기', imageUrl: '/images/09d.png' },
+      'ragged shower rain': { description: '불규칙한 소나기', imageUrl: '/images/09d.png' },
+      'light snow': { description: '가벼운 눈', imageUrl: '/images/13d.png' },
+      'snow': { description: '눈', imageUrl: '/images/13d.png' },
+      'heavy snow': { description: '심한 눈', imageUrl: '/images/13d.png' },
+      'sleet': { description: '진눈깨비', imageUrl: '/images/13d.png' },
+      'light shower sleet': { description: '가벼운 진눈깨비 샤워', imageUrl: '/images/13d.png' },
+      'shower sleet': { description: '진눈깨비 샤워', imageUrl: '/images/13d.png' },
+      'light rain and snow': { description: '가벼운 비와 눈', imageUrl: '/images/13d.png' },
+      'rain and snow': { description: '비와 눈', imageUrl: '/images/13d.png' },
+      'light shower snow': { description: '가벼운 눈 샤워', imageUrl: '/images/13d.png' },
+      'shower snow': { description: '눈 샤워', imageUrl: '/images/13d.png' },
+      'heavy shower snow': { description: '심한 눈 샤워', imageUrl: '/images/13d.png' },
+      
+      'mist': { description: '안개', imageUrl: '/images/50d.png' },
+      'smoke': { description: '연기', imageUrl: '/images/50d.png' },
+      'haze': { description: '아지랭이', imageUrl: '/images/50d.png' },
+      'sand/dust whirls': { description: '모래/먼지 소용돌이', imageUrl: '/images/50d.png' },
+      'fog': { description: '안개', imageUrl: '/images/50d.png' },
+      'sand': { description: '모래', imageUrl: '/images/50d.png' },
+      'dust': { description: '먼지', imageUrl: '/images/50d.png' },
+      'volcanic ash': { description: '화산재', imageUrl: '/images/50d.png' },
+      'squalls': { description: '돌풍', imageUrl: '/images/50d.png' },
+      'tornado': { description: '토네이도', imageUrl: '/images/50d.png' },
+      
+      'clear sky': { description: '맑은 하늘', imageUrl: '/images/01d.png' },
+      
+      'few clouds': { description: '구름 조금', imageUrl: '/images/02d.png' },
+      'scattered clouds': { description: '흩어진 구름', imageUrl: '/images/03d.png' },
+      'broken clouds': { description: '부서진 구름', imageUrl: '/images/04d.png' },
+      'overcast clouds': { description: '흐린 구름', imageUrl: '/images/04d.png' }
     };
-    return translations[description] || description;
+    return translations[description] || { description, imageUrl: '/images/default.jpg' };
   };
 
-// 날짜를 'YYYY-MM-DD' 형식으로 형식화합니다.
-function formatDate(dateString: string): string {
-  const dateOptions: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    timeZone: 'Asia/Seoul'
-  };
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '월 ').replace(/\./g, '일');
-}
+  function formatDate(dateString: string): string {
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Seoul'
+    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '월 ').replace(/\./g, '일');
+  }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-    setCurrentPeriod(getCurrentPeriod());
-    }, 1000);  // 1초마다 갱신
-    return () => clearInterval(intervalId);  // 컴포넌트 언마운트 시 인터벌 정리
+      setCurrentPeriod(getCurrentPeriod());
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, []);
-
 
   useEffect(() => {
     const today = new Date();
@@ -167,30 +205,44 @@ function formatDate(dateString: string): string {
     const date = String(today.getDate()).padStart(2, '0');
     const dateString = `${year}${month}${date}`;
     setCurrentDate(dateString);
-  }, [dateOffset]);  // dateOffset 상태가 변경될 때마다 이 useEffect가 실행됩니다.
+  }, [dateOffset]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!userData) {
-        router.push('/welcome');
+      router.push('/welcome');
     } else if (currentDate) {
-        const { department, grade, class: classNumber } = JSON.parse(userData);
-        const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.hisTimetable && data.hisTimetable[1] && data.hisTimetable[1].row) {
-                    setTimetable(data.hisTimetable[1].row);
-                } else {
-                    console.error('Invalid or missing data', data);  // 오류 로깅
-                    setTimetable([]);  // 시간표를 빈 배열로 설정하여 오류를 방지
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching timetable data:', error);
-            });
+      fetchTimetable();
     }
-}, [currentDate, userData]);
+  }, [currentDate, userData]);
 
+  const fetchTimetable = async () => {
+    if (!userData) {
+      console.error('No user data');
+      return;
+    }
+
+    const { department, grade, class: classNumber } = JSON.parse(userData);
+    const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&ALL_TI_YMD=${currentDate}&GRADE=${grade}&DDDEP_NM=${encodeURIComponent(department)}&CLASS_NM=${classNumber}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error('Failed to fetch timetable data:', response.status);
+        setTimetable([]);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.hisTimetable && data.hisTimetable[1] && data.hisTimetable[1].row) {
+        setTimetable(data.hisTimetable[1].row);
+      } else {
+        console.error('Invalid or missing data', data);
+        setTimetable([]);
+      }
+    } catch (error) {
+      console.error('Error fetching timetable data:', error);
+    }
+  };
 
   const changeDate = (offset: number) => {
     setDateOffset(prevOffset => prevOffset + offset);
@@ -198,20 +250,23 @@ useEffect(() => {
 
   const fetchMeal = async (): Promise<void> => {
     try {
-      const lunchResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
+      const lunchRequest = fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=2`);
+      const dinnerRequest = fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
+
+      const [lunchResponse, dinnerResponse] = await Promise.all([lunchRequest, dinnerRequest]);
+
       if (!lunchResponse.ok) throw new Error('Failed to fetch lunch data');
-      const dinnerResponse = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${process.env.NEXT_PUBLIC_NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${process.env.NEXT_PUBLIC_ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${process.env.NEXT_PUBLIC_SD_SCHUL_CODE}&MLSV_YMD=${currentDate}&MMEAL_SC_CODE=3`);
       if (!dinnerResponse.ok) throw new Error('Failed to fetch dinner data');
-  
+
       const lunchData = await lunchResponse.json();
       const dinnerData = await dinnerResponse.json();
-  
+
       if (lunchData.mealServiceDietInfo && lunchData.mealServiceDietInfo[1]?.row) {
         setLunchData(lunchData.mealServiceDietInfo[1].row[0]);
       } else {
         setLunchData({DDISH_NM: "오늘은 점심이 없습니다.", NTR_INFO: "", ORPLC_INFO: "" });
       }
-    
+
       if (dinnerData.mealServiceDietInfo && dinnerData.mealServiceDietInfo[1]?.row) {
         setDinnerData(dinnerData.mealServiceDietInfo[1].row[0]);
       } else {
@@ -290,7 +345,7 @@ useEffect(() => {
   <div className="container">
     <header className="header">
         <div className="logo-container">
-            <img src="/image/logo.svg" alt="Logo" className="logo" />
+            <img src="/images/logo.svg" alt="Logo" className="logo" />
         </div>
     </header>
     <div className="box timetable-wrapper">
@@ -301,11 +356,15 @@ useEffect(() => {
             
           )}
               {weatherData ? (
-          <div>
-            <div className="meal-content">날씨는 {translateWeatherDescription(weatherData.weather[0].description)}에 {Math.round(weatherData.main.temp - 273.15)}°C 입니다.</div>
-          </div>
+                <div className="meal-content">
+                  <br />
+                <div>
+      <img className="weatherImg" src={translateWeatherDescription(weatherData.weather[0].description).imageUrl} alt="Weather image"></img>
+      </div>
+      현재 날씨는 {translateWeatherDescription(weatherData.weather[0].description).description}에 {Math.round(weatherData.main.temp - 273.15)}°C 입니다.
+        </div>
         ) : (
-          <p>날씨 데이터 로딩 중...</p>
+          <p>데이터 로딩 중...</p>
         )}<br />
       </div>
     <div className="box current-period">
@@ -359,7 +418,6 @@ useEffect(() => {
         </div>
     </div>
 )}
-
 
     <button className="show-button" onClick={toggleDetailInfo}>자세히 보기</button>
     <div className="detail-info">

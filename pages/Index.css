@@ -102,11 +102,9 @@ body {
     margin-bottom: 20px;
 }
 
-
 h3, h4 {
     font-weight: normal;  /* 또는 font-weight: 400; */
 }
-
 
 .timetable-wrapper {
     border-radius: 20px;
@@ -170,8 +168,6 @@ h3, h4 {
     color: gray;
 }
 
-
-
 .current-period-name {
     font-weight: bold;  /* 볼드 스타일 추가 */
 }
@@ -195,7 +191,6 @@ h3, h4 {
     flex-direction: column;
     min-height: 100vh;
 }
-
 
 .footer {
     background-color: #EFF0F5;
@@ -222,4 +217,9 @@ h3, h4 {
     padding-left: 0px;  /* 예: 왼쪽 패딩을 10px로 설정 */
     color: rgb(156, 156, 156);
     font-size: 0.8rem;
+}
+
+.weatherImg {
+    width: 4%;
+    height: 4%;
 }

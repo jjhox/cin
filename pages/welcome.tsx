@@ -29,7 +29,7 @@ const Welcome = () => {
     <div className="welcome-container">
       <div className="welcome-box">
       <div className="logo-container">
-            <img src="/image/logo.svg" alt="Logo" className="logo" />
+            <img src="/images/logo.svg" alt="Logo" className="logo" />
         </div>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
