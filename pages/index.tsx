@@ -208,12 +208,18 @@ const Index = ({ letters }) => {
   }, [dateOffset]);
 
   useEffect(() => {
-    if (!userData) {
-      router.push('/welcome');
-    } else if (currentDate) {
-      fetchTimetable();
-    }
-  }, [currentDate, userData]);
+    const fetchData = async () => {
+      if (userData) {
+        if (currentDate) {
+          await fetchTimetable();
+        }
+      } else {
+        router.push('/welcome');
+      }
+    };
+  
+    fetchData();
+  }, [currentDate, userData]);  
 
   const fetchTimetable = async () => {
     if (!userData) {
